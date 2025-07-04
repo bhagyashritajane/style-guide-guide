@@ -1,16 +1,151 @@
----
-layout: page
-title: Style Guide Guide
-description: A boilerplate for creating superb style guides
----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Beauty Salon Accounting</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff8f9;
+      margin: 2rem;
+      color: #333;
+    }
+    h1 {
+      color: #d63384;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label, input, select {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+    }
+    button {
+      background-color: #d63384;
+      color: white;
+      padding: 0.6rem 1rem;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ad2167;
+    }
+    table {
+      width: 100%;
+      margin-top: 2rem;
+      border-collapse: collapse;
+      background: #fff;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.6rem;
+      text-align: center;
+    }
+    .summary {
+      margin-top: 2rem;
+      background: #ffe2ec;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
 
-The homepage of a style guide should provide high-level information around what the design system is, what benefits it provides, who it's for, and how to get started with it. Like any good index page, it should provide clear navigation to key parts of the website.
+<h1>💇 Beauty Salon Accounting System</h1>
 
-<div class="u-margin-bottom-double"><a href="{{ "/getting-started.html" | prepend: site.baseurl }}" class="c-btn">Get Started</a></div>
+<div class="form-group">
+  <label for="type">Transaction Type</label>
+  <select id="type">
+    <option value="Income">Income</option>
+    <option value="Expense">Expense</option>
+  </select>
+</div>
 
-## Design System Benefits
-Explain how the design system benefits users and the business. For inspiration, check out over 180 examples of design systems at [Styleguides.io](http://styleguides.io/examples).
-tivizes teams to use the system, and shows components in the wild.
+<div class="form-group">
+  <label for="amount">Amount (₹)</label>
+  <input type="number" id="amount" placeholder="Enter amount" required>
+</div>
 
-## Contributing info
-If it's desirable to have people from across the organization contribute to the design system, linking to the <a href="{{ "/contributing.html" | prepend: site.baseurl }}">contributing page</a> from the homepage could be a good idea.
+<div class="form-group">
+  <label for="description">Description</label>
+  <input type="text" id="description" placeholder="E.g. Haircut, Product Purchase">
+</div>
+
+<button onclick="addTransaction()">Add Transaction</button>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Date</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Amount (₹)</th>
+    </tr>
+  </thead>
+  <tbody id="transactions-table">
+    <!-- Data will be added here -->
+  </tbody>
+</table>
+
+<div class="summary">
+  <p><strong>Total Income:</strong> ₹<span id="total-income">0.00</span></p>
+  <p><strong>Total Expenses:</strong> ₹<span id="total-expense">0.00</span></p>
+  <p><strong>Net Profit:</strong> ₹<span id="net-profit">0.00</span></p>
+</div>
+
+<script>
+  let transactions = [];
+
+  function addTransaction() {
+    const type = document.getElementById('type').value;
+    const amount = parseFloat(document.getElementById('amount').value);
+    const description = document.getElementById('description').value;
+    const date = new Date().toLocaleString();
+
+    if (isNaN(amount) || amount <= 0) {
+      alert("Please enter a valid amount.");
+      return;
+    }
+
+    transactions.push({ type, amount, description, date });
+    updateTable();
+    document.getElementById('amount').value = '';
+    document.getElementById('description').value = '';
+  }
+
+  function updateTable() {
+    const tbody = document.getElementById('transactions-table');
+    tbody.innerHTML = '';
+    let income = 0;
+    let expense = 0;
+
+    transactions.forEach((txn, index) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${txn.date}</td>
+        <td>${txn.type}</td>
+        <td>${txn.description}</td>
+        <td>₹${txn.amount.toFixed(2)}</td>
+      `;
+      tbody.appendChild(row);
+
+      if (txn.type === 'Income') income += txn.amount;
+      else expense += txn.amount;
+    });
+
+    document.getElementById('total-income').innerText = income.toFixed(2);
+    document.getElementById('total-expense').innerText = expense.toFixed(2);
+    document.getElementById('net-profit').innerText = (income - expense).toFixed(2);
+  }
+</script>
+
+</body>
+</html>
